@@ -1,0 +1,8 @@
+Start up on github commandline
+
+mac.github.com
+
+cd to where you want the folder for the reposetory
+
+git clone https://github.com/larsommen/soduko.git
+
