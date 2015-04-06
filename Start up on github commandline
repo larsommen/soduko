@@ -1,20 +1,23 @@
 Start up on github commandline
 
-mac.github.com
+download and install from mac.github.com
 
 cd to where you want the folder for the reposetory
 
 git clone https://github.com/larsommen/soduko.git
+(this address is from the repository homepage)
+
 
 git add filename 
 
 or 
 
-git add -A (adds all)
+git add -A (adds all your changed files)
 
-git commit -m "message"
 
-git push
+git commit -m "message" (message is important - telling what you changed/added or deleted)
+
+git push (actually uploads the changes)
 
 git pull (for pulling updates)
 
