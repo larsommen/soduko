@@ -16,5 +16,9 @@ git commit -m "message"
 
 git push
 
+git pull (for pulling updates)
+
+git status (for getting info on updates)
+
 
 
