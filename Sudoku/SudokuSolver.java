@@ -13,14 +13,25 @@ public class SudokuSolver implements ISudokuSolver {
 
 	public void setValue(int col, int row, int value) {
 		puzzle[col][row] = value;
+
 	}
 
 	public void setup(int size1) {
 		size = size1;
 		puzzle = new int[size*size][size*size];
 		D = new ArrayList<ArrayList<Integer>>(size*size*size*size);
+
 		
 		//Initialize each D[X]...
+
+		for (int i=0; i<size*size*size*size;i++){
+			ArrayList<Integer> tempArrray = new ArrayList<Integer>();
+			for(int x=1; x<10 ;x++){
+				tempArrray.add(x);
+			}
+			D.add(i,tempArrray);
+		}
+
 		
 	}
 
@@ -29,7 +40,31 @@ public class SudokuSolver implements ISudokuSolver {
 		ArrayList<Integer> asn = GetAssignment(puzzle);
 		
 		//INITIAL_FC
+		if(!INITIAL_FC(asn)){
+			return false;
+			}
+
+
+		int index=0;
+		for(Integer i:asn){
+			if(i==0){
+				for(int value=1; value<10; value++){
+					if(!CONSISTENT(asn,index,value)){
+						int pos=D.get(index).indexOf(value);
+						D.get(index).remove(pos);
+					}
+				}
+			}
+		}
+
 		//FC
+
+			FC(asn);
+		//FC(asn);
+
+	
+
+
 
 		return true;
 	}
@@ -43,8 +78,69 @@ public class SudokuSolver implements ISudokuSolver {
 		//YOUR TASK:  Implement FC(asn)
 		//---------------------------------------------------------------------------------
 		public ArrayList FC(ArrayList<Integer> asn) {
+
+
+
+
+			int x=-1;
+
+			for(int i=0; i<asn.size();i++){
+				if (asn.get(i)==0){
+					x=i;
+					break;
+				}
+			}
+
+			if(x==-1){
+				return asn;
+			}
+
+			ArrayList<ArrayList<Integer>> newD=new ArrayList<ArrayList<Integer>>(size*size*size*size);
+
+			for (int i=0;i<size*size*size*size;i++){
+					newD.add(D.get(i));
+					
+				}
+
+
+			for(Integer i:D.get(x)){
+
+				System.out.println("x is:" +x+ " i is: "+i+ " AC_FC is: "+AC_FC(x, i));
+				
+				if(AC_FC(x, i)){
+
+					//System.out.println("x is:" +x+ " i is: "+i);
+
+					asn.add(x,i);
+					//Reduce domain Dx
+					D.get(x).clear();
+					D.get(x).add(i);
+					
+					ArrayList<Integer> r = FC(asn);
+					if(r!=null){
+						return r;
+					}else{
+						asn.add(x,0);
+						for (int j=0;j<size*size*size*size;j++){
+							D.add(j, newD.get(j));
+						}
+
+					}
+				}else{
+					for (int j=0;j<size*size*size*size;j++){
+							D.add(j, newD.get(j));
+					}
+	
+				}
+
+
+
+
+			}
+			System.out.println("Returning null");
 	
 			return null;//failure
+				
 		}
 
 	
