@@ -7,7 +7,6 @@ public class SudokuSolver implements ISudokuSolver {
 	int size;
 
 	ArrayList<ArrayList<Integer>> D; //= new ArrayList<ArrayList<Integer>>();
-	ArrayList<ArrayList<ArrayList<Integer>>> Dold = new ArrayList<ArrayList<ArrayList<Integer>>>(); // for storing the Dold
 	
 	public int[][] getPuzzle() {
 		return puzzle;
@@ -26,8 +25,8 @@ public class SudokuSolver implements ISudokuSolver {
 		
 		//Initialize each D[X]...
 		for(int i = 0; i< size*size*size*size; i++){ //for each Variable
-			ArrayList<Integer> domain = new ArrayList<Integer>(); // initialize the domain {1,2,3,4,5,6,7,8,9}
-			for(int d = 1; d<10; d++){ 
+			ArrayList<Integer> domain = new ArrayList<Integer>(); // initialize the domain {0,1,2,3,4,5,6,7,8,9}
+			for(int d = 0; d<10; d++){ 
 				domain.add(d);
 			}
 			D.add(i, domain);
@@ -47,6 +46,7 @@ public class SudokuSolver implements ISudokuSolver {
 			return false;
 		}
 
+		
 		//FC
 		ArrayList<Integer> solution = FC(asn);
 		// set puzzle[][] to the solution
@@ -58,6 +58,11 @@ public class SudokuSolver implements ISudokuSolver {
 		System.out.println("Solution: ");
 		System.out.println(solution.toString());
 
+
+		// Print Doamins
+		System.out.println("domains");
+		System.out.println(D);
+		
 		return true;
 
 	}
@@ -75,7 +80,7 @@ public class SudokuSolver implements ISudokuSolver {
 						D.get(relevantVariables.get(j)).remove(index); // remove Value assigned to Variable from all the domains of relevant Variables
 					}
 				}
-			}	
+			}
 		}
 		// print the domains to the terminal:
 		printDomain(D);
@@ -146,19 +151,18 @@ public class SudokuSolver implements ISudokuSolver {
 			***************************************/
 			// make a copy of the domain
 			ArrayList<ArrayList<Integer>> dOld=new ArrayList<ArrayList<Integer>>(size*size*size*size);
-			for (int i=0;i<size*size*size*size;i++){
-					ArrayList<Integer> tmp = new ArrayList<Integer>();
-				for( int j = 0; j < D.get(i).size(); j++){
-					tmp.add(j, D.get(i).get(j));
-					}
-					dOld.add(i, tmp);	
+			for(int variable = 0; variable < D.size(); variable++){
+				ArrayList<Integer> tmpDomain = new ArrayList<Integer>();
+				for(int value = 0; value < D.get(variable).size(); value++){
+					tmpDomain.add(value, D.get(variable).get(value));
+				}
+				dOld.add(variable, tmpDomain);
 			}
-			Dold.add(dOld); // add it to the list of old D's
 			/***************************************
 			for all V ∈ DX do
 			***************************************/
 			// iterate through all the variables in the domain of x
-			for (int i = 0; i < D.get(x).size(); i++){
+			for (int i = 1; i < D.get(x).size(); i++){
 				// varable v
 				int v = D.get(x).get(i);
 			/***************************************
@@ -190,17 +194,27 @@ public class SudokuSolver implements ISudokuSolver {
 					// set value 0 to Variable X in the asn (redo the change so to speak)
 					asn.set(x,0);
 					// "reset D"
-					D = Dold.get(Dold.size()-1); // get the last Dold
-					Dold.remove(Dold.size()-1); // remove the last Dold from the list
-								}
+					for(int variable = 0; variable < dOld.size(); variable++){
+						ArrayList<Integer> tmpDomain = new ArrayList<Integer>();
+						for(int value = 0; value < dOld.get(variable).size(); value++){
+							tmpDomain.add(value, dOld.get(variable).get(value));
+						}
+						D.set(variable, tmpDomain);
+					}
+				}
 			/***************************************
 				else
 					D ← Dold
 			***************************************/
 				else{
 					// "reset D"
-					D = Dold.get(Dold.size()-1); // get the last Dold
-					Dold.remove(Dold.size()-1); // remove the last Dold from the list
+					for(int variable = 0; variable < dOld.size(); variable++){
+						ArrayList<Integer> tmpDomain = new ArrayList<Integer>();
+						for(int value = 0; value < dOld.get(variable).size(); value++){
+							tmpDomain.add(value, dOld.get(variable).get(value));
+						}
+						D.set(variable, tmpDomain);
+					}
 				}
 			}
 			/***************************************
