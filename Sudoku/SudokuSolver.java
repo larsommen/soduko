@@ -30,10 +30,8 @@ public class SudokuSolver implements ISudokuSolver {
 				domain.add(d);
 			}
 			D.add(i, domain);
-		}
-		
+		}	
 	}
-
 
 	public boolean solve() {
 		ArrayList<Integer> asn = GetAssignment(puzzle);
@@ -46,7 +44,6 @@ public class SudokuSolver implements ISudokuSolver {
 			return false;
 		}
 
-		
 		//FC
 		ArrayList<Integer> solution = FC(asn);
 		// set puzzle[][] to the solution
@@ -149,8 +146,9 @@ public class SudokuSolver implements ISudokuSolver {
 			/***************************************
 			Dold ←D
 			***************************************/
-			// make a copy of the domain
+			// make a DEEP copy of the domain
 			ArrayList<ArrayList<Integer>> dOld=new ArrayList<ArrayList<Integer>>(size*size*size*size);
+
 			for(int variable = 0; variable < D.size(); variable++){
 				ArrayList<Integer> tmpDomain = new ArrayList<Integer>();
 				for(int value = 0; value < D.get(variable).size(); value++){
@@ -161,7 +159,7 @@ public class SudokuSolver implements ISudokuSolver {
 			/***************************************
 			for all V ∈ DX do
 			***************************************/
-			// iterate through all the variables in the domain of x
+			// iterate through all the values in the domain of x (EXCEPT OF COURSE 0)
 			for (int i = 1; i < D.get(x).size(); i++){
 				// varable v
 				int v = D.get(x).get(i);
