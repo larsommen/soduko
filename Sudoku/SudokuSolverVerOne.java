@@ -1,13 +1,11 @@
 import java.util.ArrayList;
 
 
-public class SudokuSolver implements ISudokuSolver {
+public class SudokuSolverVerOne implements ISudokuSolver {
 
 	int[][] puzzle;
 	int size;
-
 	ArrayList<ArrayList<Integer>> D; //= new ArrayList<ArrayList<Integer>>();
-	ArrayList<ArrayList<ArrayList<Integer>>> Dold = new ArrayList<ArrayList<ArrayList<Integer>>>(); // for storing the Dold
 	
 	public int[][] getPuzzle() {
 		return puzzle;
@@ -15,6 +13,7 @@ public class SudokuSolver implements ISudokuSolver {
 
 	public void setValue(int col, int row, int value) {
 		puzzle[col][row] = value;
+
 	}
 
 	public void setup(int size1) {
@@ -22,73 +21,52 @@ public class SudokuSolver implements ISudokuSolver {
 		puzzle = new int[size*size][size*size];
 		D = new ArrayList<ArrayList<Integer>>(size*size*size*size);
 
-
 		
 		//Initialize each D[X]...
-		for(int i = 0; i< size*size*size*size; i++){ //for each Variable
-			ArrayList<Integer> domain = new ArrayList<Integer>(); // initialize the domain {1,2,3,4,5,6,7,8,9}
-			for(int d = 1; d<10; d++){ 
-				domain.add(d);
+
+		for (int i=0; i<size*size*size*size;i++){
+			ArrayList<Integer> tempArrray = new ArrayList<Integer>();
+			for(int x=1; x<10 ;x++){
+				tempArrray.add(x);
 			}
-			D.add(i, domain);
+			D.add(i,tempArrray);
 		}
+
 		
 	}
 
 
 	public boolean solve() {
 		ArrayList<Integer> asn = GetAssignment(puzzle);
-
-		//Update D[X]
-		updateDomains(asn);
 		
 		//INITIAL_FC
 		if(!INITIAL_FC(asn)){
 			return false;
+			}
+
+
+		int index=0;
+		for(Integer i:asn){
+			if(i==0){
+				for(int value=1; value<10; value++){
+					if(!CONSISTENT(asn,index,value)){
+						int pos=D.get(index).indexOf(value);
+						D.get(index).remove(pos);
+					}
+				}
+			}
 		}
 
 		//FC
-		ArrayList<Integer> solution = FC(asn);
-		// set puzzle[][] to the solution
-			for (int i = 0; i <solution.size(); i++){
-				setValue(GetRow(i),GetColumn(i), solution.get(i));
-			}
 
-		// Print result to terminal:
-		System.out.println("Solution: ");
-		System.out.println(solution.toString());
+			FC(asn);
+		//FC(asn);
+
+	
+
+
 
 		return true;
-
-	}
-	/**
-	 * method updates domains
-	 *
-	*/
-	public void updateDomains(ArrayList<Integer> asn) {
-		for(int i=0 ; i < asn.size(); i++){ // for each Variable from 0-80 
-			if(asn.get(i) != 0){ // if the Variable has a Value
-				ArrayList<Integer> relevantVariables = GetRelevantVariables(i);
-				for(int j = 0; j< relevantVariables.size(); j++){ // for each relevant Variable 
-					int index = D.get(relevantVariables.get(j)).indexOf(asn.get(i)); 
-					if(index != -1){ // check that the Value is in the domain
-						D.get(relevantVariables.get(j)).remove(index); // remove Value assigned to Variable from all the domains of relevant Variables
-					}
-				}
-			}	
-		}
-		// print the domains to the terminal:
-		printDomain(D);
-	}
-	/**
-	 * method prints domains
-	 *
-	*/
-	public void printDomain(ArrayList<ArrayList<Integer>> domain) {
-		for (int i = 0; i < domain.size(); i++){
-			ArrayList<Integer> relevantVariables = domain.get(i);
-			System.out.println("cell # " + i + " has domain: "+ relevantVariables.toString());
-		}
 	}
 
 	public void readInPuzzle(int[][] p) {
@@ -100,114 +78,73 @@ public class SudokuSolver implements ISudokuSolver {
 		//YOUR TASK:  Implement FC(asn)
 		//---------------------------------------------------------------------------------
 		public ArrayList FC(ArrayList<Integer> asn) {
-			System.out.println("FC on asn: "+asn.toString());
-
-			/***************************************
-			if asn contains no 0 then 
-				return asn
-			X ← index of first 0 in asn
-			Dold ←D
-			for all V ∈ DX do
-				if AC-FC(X, V ) then 
-					asn[X] ← V
-					R ←FC(asn)
-					if R != fail then
-						return R
-					asn[X] ← 0
-					D ← Dold
-				else
-					D ← Dold
-			return fail
-			***************************************/
 
 
-			/***************************************
-			if asn contains no 0 then 
-				return asn
-			X ← index of first 0 in asn
-			***************************************/
-			// initialize variable x
+
+
 			int x=-1;
-			// check the assignment for each cell in the grid
-			// assign variable x to the first unassigned cell (value = 0)
+
 			for(int i=0; i<asn.size();i++){
 				if (asn.get(i)==0){
 					x=i;
 					break;
 				}
 			}
-			// if asn contains no zeros, return asn
+
 			if(x==-1){
 				return asn;
 			}
 
-			/***************************************
-			Dold ←D
-			***************************************/
-			// make a copy of the domain
-			ArrayList<ArrayList<Integer>> dOld=new ArrayList<ArrayList<Integer>>(size*size*size*size);
+			ArrayList<ArrayList<Integer>> newD=new ArrayList<ArrayList<Integer>>(size*size*size*size);
+
 			for (int i=0;i<size*size*size*size;i++){
-					ArrayList<Integer> tmp = new ArrayList<Integer>();
-				for( int j = 0; j < D.get(i).size(); j++){
-					tmp.add(j, D.get(i).get(j));
-					}
-					dOld.add(i, tmp);	
-			}
-			Dold.add(dOld); // add it to the list of old D's
-			/***************************************
-			for all V ∈ DX do
-			***************************************/
-			// iterate through all the variables in the domain of x
-			for (int i = 0; i < D.get(x).size(); i++){
-				// varable v
-				int v = D.get(x).get(i);
-			/***************************************
-				if AC-FC(X, V ) then asn[X] ← V
-			***************************************/
-				if(AC_FC(x, v)){		
-			/***************************************
-					asn[X] ← V
-					R ←FC(asn)
-			***************************************/
-					// add value V to Variable X in the asn
-					asn.set(x,v);
-					// craate R from FC(asn)
+					newD.add(D.get(i));
+					
+				}
+
+
+			for(Integer i:D.get(x)){
+
+				System.out.println("x is:" +x+ " i is: "+i+ " AC_FC is: "+AC_FC(x, i));
+				
+				if(AC_FC(x, i)){
+
+					//System.out.println("x is:" +x+ " i is: "+i);
+
+					asn.add(x,i);
+					//Reduce domain Dx
+					D.get(x).clear();
+					D.get(x).add(i);
+					
 					ArrayList<Integer> r = FC(asn);
-			/***************************************
-					if R != fail then
-						return R
-			***************************************/
-					// if r NOT is empty
 					if(r!=null){
 						return r;
-						
+					}else{
+						asn.add(x,0);
+						for (int j=0;j<size*size*size*size;j++){
+							D.add(j, newD.get(j));
+						}
+
 					}
-					// else r is empty
-			/***************************************
-					asn[X] ← 0
-					D ← Dold
-			***************************************/
-					// set value 0 to Variable X in the asn (redo the change so to speak)
-					asn.set(x,0);
-					// "reset D"
-					D = Dold.get(Dold.size()-1); // get the last Dold
-					Dold.remove(Dold.size()-1); // remove the last Dold from the list
-								}
-			/***************************************
-				else
-					D ← Dold
-			***************************************/
-				else{
-					// "reset D"
-					D = Dold.get(Dold.size()-1); // get the last Dold
-					Dold.remove(Dold.size()-1); // remove the last Dold from the list
+				}else{
+					for (int j=0;j<size*size*size*size;j++){
+							D.add(j, newD.get(j));
+					}
+	
 				}
+
+
+
+
 			}
-			/***************************************
-			return fail
-			***************************************/
+			System.out.println("Returning null");
+	
 			return null;//failure
+				
 		}
+
+	
+
 		
 		//---------------------------------------------------------------------------------
 		// CODE SUPPORT FOR IMPLEMENTING FC(asn)
