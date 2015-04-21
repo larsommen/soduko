@@ -1,0 +1,107 @@
+\documentclass[12pt]{article}
+
+% Pretty much all of the ams maths packages
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+
+% Allows you to manipulate the page a bit
+\usepackage[a4paper]{geometry}
+
+% Pulls the page out a bit - makes it look better (in my opinion)
+\usepackage{a4wide}
+
+% Removes paragraph indentation (not needed most of the time now)
+\usepackage{parskip}
+
+% Allows inclusion of graphics easily and configurably
+\usepackage{graphicx}
+
+% Provides ways to make nice looking tables
+\usepackage{booktabs}
+
+% Allows you to rotate tables and figures
+\usepackage{rotating}
+
+% Allows shading of table cells
+\usepackage{colortbl}
+% Define a simple command to use at the start of a table row to make it have a shaded background
+\newcommand{\gray}{\rowcolor[gray]{.9}}
+
+\usepackage{textcomp}
+
+% Provides commands to make subfigures (figures with (a), (b) and (c))
+\usepackage{subfigure}
+
+% Typesets URLs sensibly - with tt font, clickable in PDFs, and not breaking across lines
+\usepackage{url}
+
+% Makes references hyperlinks in PDF output
+\usepackage{hyperref}
+
+% Provides ways to include syntax-highlighted source code
+\usepackage{listings}
+\lstset{frame=single, basicstyle=\ttfamily}
+
+% Provides Harvard-style referencing
+\usepackage{natbib}
+\bibpunct{(}{)}{;}{a}{,}{,}
+
+% Provides good access to colours
+\usepackage{color}
+\usepackage{xcolor}
+
+% Simple command I defined to allow me to mark TODO items in red
+\newcommand{\todo}[1] {\textbf{\textcolor{red}{#1}}}
+
+% Allows fancy stuff in the page header
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+% Vastly improves the standard formatting of captions
+\usepackage[margin=10pt,font=small,labelfont=bf, labelsep=endash]{caption}
+
+% Standard title, author etc.
+\title{Report: Sudoku}
+\author{by	Karina Abramova,\\ Mikkel Bernt Buchvardt \\ and\\ Theodor Lars Nyholm Ommen}
+\date{}
+% Put text on the left-hand and right-hand side of the header
+\fancyhead{}
+\lhead{Sudoku}
+\rhead{Abramova - Buchvardt - Ommen}
+\chead{}
+
+\usepackage{titletoc}
+
+\renewcommand{\thepart}{\Alph{part}}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\alph{subsection})}
+\renewcommand{\thesubsubsection}{\alph{subsection}\alph{subsubsection})}
+
+\titlecontents{chapter}
+[2.65em]
+{\addvspace{10pt}\bfseries}
+{\contentslabel{2.3em}}
+{\hspace*{-2.3em}}
+{\space.\hfill\contentspage}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=Java,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+%	numbers=left,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}

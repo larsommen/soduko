@@ -30,6 +30,8 @@ public interface ISudokuSolver {
 	 * @param size the size measured in blocks in a row, ie. a normal soduko
 	 * will have a size of 3 (and NOT 9).
 	 */
+
+	
 	public void setup(int size);
 	
 	/**
