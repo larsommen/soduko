@@ -161,7 +161,7 @@ public class SudokuSolver implements ISudokuSolver {
 			***************************************/
 			// iterate through all the values in the domain of x (EXCEPT OF COURSE 0)
 			for (int i = 1; i < D.get(x).size(); i++){
-				// varable v
+				// variable v
 				int v = D.get(x).get(i);
 			/***************************************
 				if AC-FC(X, V ) then asn[X] ← V
@@ -173,7 +173,7 @@ public class SudokuSolver implements ISudokuSolver {
 			***************************************/
 					// add value V to Variable X in the asn
 					asn.set(x,v);
-					// craate R from FC(asn)
+					// create R from FC(asn)
 					ArrayList<Integer> r = FC(asn);
 			/***************************************
 					if R != fail then

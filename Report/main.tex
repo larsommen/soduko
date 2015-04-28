@@ -15,34 +15,25 @@
 
 \section{Introduction}
 
-[4, 0, 0, 2, 0, 8, 0, 0, 3, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 7, 0, 0, 9, 0, 0, 2, 0, 6, 0, 0, 3, 0, 0, 0, 0, 8, 0, 0, 5, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 0, 9, 0, 0, 5, 0, 5, 0, 0, 3, 0, 0, 9, 0, 0, 0, 7, 0, 0, 0, 3, 0, 0, 2, 0, 0, 9, 0, 4, 0, 0, 6]
+The most important aspects of our implementation are:
 
+When the solve() method is called (by user pressing the 'Solve' button in the GUI) before doing anything else all the domains are updated.
+
+After this the provided INITIAL\_FC() is run. If there is not consistency the program terminates with the message "Sudoku cannot be solved". 
+
+If there is consistency FC() method is called, this returns the first complete assignment that it finds. 
 
 
 \section{Rules}
 
-As described in the assignment there are two rules to be observed:
-\begin{itemize}
-	\item On an N by N size board N queens has to be placed
-	\item All queens are to be considered able to of different color
-\end{itemize}
 
-We had to find a way to translate these two rules into boolean functions.
+The rules for assignments are simple - the numbers form 1 - 9 has to be somewhere in each row and each column and also in each defined square of 3 by 3 cells.
 
-There has to be exactly one queen in each row and each column
-In each diagonal there can also be only one queen.
-
-Another way of describing the exactly one queen in each row is by saying that if there is a queen in the first cell, there cannot be one in the second and there cannot be one in the third and so on.
-These rules have to be entered in the BDD and only then can you start placing queens on the board (and in the BDD).
+Provided methods called GetColumn(), GetRow() and GetVariable() are used to traverse for consistency.
 
 \section{Code}
 
 
-For setting expression on where a queen can be placed we set up the BDD with nand expressions for all fields depending on each other (if the first then not the second and not the third and so on).
-
-
-
-For instance the code for the expression that only one cell in a column can contain a queen is done as follows(from line 121 in QueensLogic.java):
 
 \begin{lstlisting}
          /* No one in the same column */
