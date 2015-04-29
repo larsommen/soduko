@@ -11,56 +11,72 @@
 \maketitle
 \endgroup
 
-
-
 \section{Introduction}
-
 The most important aspects of our implementation are:
 
 When the solve() method is called (by user pressing the 'Solve' button in the GUI) before doing anything else all the domains are updated.
 
-After this the provided INITIAL\_FC() is run. If there is not consistency the program terminates with the message "Sudoku cannot be solved". 
+After this, the provided INITIAL\_FC() is run. If there is no consistency, the program terminates with the message "Sudoku cannot be solved". 
 
-If there is consistency FC() method is called, this returns the first complete assignment that it finds. 
+If there is consistency, FC() method is called. This returns the first complete assignment that it finds. 
 
 
 \section{Rules}
-
-
-The rules for assignments are simple - the numbers form 1 - 9 has to be somewhere in each row and each column and also in each defined square of 3 by 3 cells.
-
-Provided methods called GetColumn(), GetRow() and GetVariable() are used to traverse for consistency.
+The rules for assignments are simple - the numbers from 1 to 9 has to be exactly once in each row, in each column and in each defined square of cell size 3x3.
 
 \section{Code}
+Provided method GetRelevantVariables() is used in the method updateDomains() to traverse through all the cells in the puzzle and update their domains.
+\pagebreak
+
+After this all we needed to do was to implement the FC algorithm according to the following pseudo code:\\
+
+FC(asn)
+
+if asn contains no 0 then 
+
+return asn
+
+X $\gets$ index of first 0 in asn
+
+Dold $\gets$D
+
+for all V  	$\epsilon$ DX do
+
+if AC-FC(X, V ) then 
+
+asn[X] $\gets$ V
+
+R $\gets$FC(asn)
+
+if R != fail then
+
+return R
+
+asn[X] $\gets$ 0
+
+D $\gets$ Dold
+
+else
+
+D  	$\gets$  Dold
+
+return fail\\
+
+The two main difficulties/bugs we encountered was the fact that the domains was copied as a hard-copy, so manipulations on D could not affect Dold. The other bug was the initialization of domains, where we first only made the domain as: {1,2,3,4,5,6,7,8,9}.
+We of course were missing the 0, which indicates that the cell has not been assigned any value. 
+Unfortunately, this flawed initialization of domains oddly enough made the algorithm solve the sudoku almost correctly - making the debugging extremely tedious. But of course, when we finally completely understood the AC\_FC algorithm,(and read the description of the project again), it became clear what the mistake was.
+
+\includegraphics[scale=0.7]{./almost}
+
+This is a picture of the “almost” solved sudoku with the domains initialized wrongly. 
 
 
 
-\begin{lstlisting}
-         /* No one in the same column */
-         for (l = 0; l < N; l++) {
-         if (l != j) { // if it is not the same variable
-         BDD u = X[i][l].apply(X[i][j], BDDFactory.nand); 
-         // creating tmp BDD by applying the binary operator opr NOT AND to the two BDDs.
-         // ie. (0 and not 5 and not 10 and not 15 and not 20  ) for the first column
-         //     (1 and not 6 and not 11 and not 16 and not 21) for the seconnd row ... (for N=5)
-         a.andWith(u);
-         }
-\end{lstlisting}
-
-The other rules are entered into the BDD in the same way and they are finally and'ed to each other in one BDD called queen.
-
-'queen' is now a BDD representing all the rules an is ready for restrictions (the placing of queens in different cells).
-
-In order to ensure that no queen placed on the board will violate any of the rules we looked at BDD.pathCount() method for the BDD 'queen' restricted to the placement of a queen (what actually happens to the BDD when a queen is placed at a specific field on the board?). 
-
-In details it is done by the insertQueen() method that inserts a queen by restricting the variable that corresponds to the cell to the BDD queen and then iterate through every cell on the board. By temporary restricting every cell to the resulting BDD of the placement and checking if there exists a path with this restriction it can be determined if the cell should be crossed or stay open.
 
 
-\section{User Interface}
 
-We used a print of the board to the console for debugging and used the GUI for the final version. We kept the console printouts to make it easier to understand what is actually going on. 
- 
-We decided not to build in means of termination in to the program as the user will want to see the result of the configuration.
+
+
 
 
 \end{document}
